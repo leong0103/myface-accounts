@@ -16,8 +16,6 @@ namespace MyFace.Models.Request
         [EmailAddress]
         public string Email { get; set; }
         
-        [Required]
-        [StringLength(70)]
         public string Username { get; set; }
         
         public string ProfileImageUrl { get; set; }
