@@ -22,13 +22,13 @@ namespace MyFace.Controllers
         [HttpGet("")]
         public ActionResult<FeedModel> GetFeed([FromQuery] FeedSearchRequest searchRequest, [FromHeader] string authorization)
         {
-            // if(_users.IsValidAccount(authorization))
-            // {
+            if(_users.IsValidAccount(authorization))
+            {
                 var posts = _posts.SearchFeed(searchRequest);
                 var postCount = _posts.Count(searchRequest);
                 return FeedModel.Create(searchRequest, posts, postCount);
-            // }
-            // return BadRequest();
+            }
+            return BadRequest();
         }
     }
 }

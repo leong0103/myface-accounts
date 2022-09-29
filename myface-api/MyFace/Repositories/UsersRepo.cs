@@ -72,7 +72,7 @@ namespace MyFace.Repositories
 
         public bool IsValidAccount (string authorization)
         {
-            string encodedData = Encoding.UTF8.GetString(Convert.FromBase64String(authorization.Substring("Base ".Length)));
+            string encodedData = Encoding.UTF8.GetString(Convert.FromBase64String(authorization.Substring("Basic ".Length)));
             string[] userNamePassword = encodedData.Split(":");
             string userName = userNamePassword[0];
             string password = userNamePassword[1];
