@@ -15,6 +15,8 @@ export function Nav(): JSX.Element {
         <nav className="nav">
             <NavLink className="nav-link" to="/">Feed</NavLink>
             <NavLink className="nav-link" to="/users">Users</NavLink>
+            <NavLink className="nav-link" to="/users/create">Create User</NavLink>
+
         </nav>
     );
 }

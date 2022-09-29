@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using MyFace.Helpers.PasswordHelper;
 using MyFace.Models.Database;
 using MyFace.Models.Request;
+using MyFace.Helpers.PasswordHelper;
 
 namespace MyFace.Repositories
 {
@@ -9,7 +13,10 @@ namespace MyFace.Repositories
     {
         IEnumerable<User> Search(UserSearchRequest search);
         int Count(UserSearchRequest search);
+        User GetByUserName(string userName);
         User GetById(int id);
+        bool IsValidAccount (string authorization);
+
         User Create(CreateUserRequest newUser);
         User Update(int id, UpdateUserRequest update);
         void Delete(int id);
@@ -57,14 +64,43 @@ namespace MyFace.Repositories
                 .Single(user => user.Id == id);
         }
 
+        public User GetByUserName(string userName)
+        {
+            return _context.Users
+                .Single(user => user.Username == userName);
+        }
+
+        public bool IsValidAccount (string authorization)
+        {
+            string encodedData = Encoding.UTF8.GetString(Convert.FromBase64String(authorization.Substring("Base ".Length)));
+            string[] userNamePassword = encodedData.Split(":");
+            string userName = userNamePassword[0];
+            string password = userNamePassword[1];
+
+            User user = _context.Users
+                .Single(user => user.Username == userName);
+            string hashedPassword = PasswordHelper.GetHash(password, user.Salt);
+
+
+            if(user.Username != userName || user.HashedPassword != hashedPassword)
+            {
+                return false;
+            }
+
+            return true;
+        }
         public User Create(CreateUserRequest newUser)
         {
+            byte[] salt = PasswordHelper.GenerateSalt();
+            string hashedPassword = PasswordHelper.GetHash(newUser.Password, salt);
             var insertResponse = _context.Users.Add(new User
             {
                 FirstName = newUser.FirstName,
                 LastName = newUser.LastName,
                 Email = newUser.Email,
                 Username = newUser.Username,
+                HashedPassword = hashedPassword,
+                Salt = salt,
                 ProfileImageUrl = newUser.ProfileImageUrl,
                 CoverImageUrl = newUser.CoverImageUrl,
             });

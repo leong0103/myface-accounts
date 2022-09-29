@@ -1,0 +1,23 @@
+﻿@import "../../Styles/constants";
+
+.create-post-page {
+  margin: $gutter-width;
+  
+  .title {
+    @include titleFont;
+  }
+}
+
+.create-post-form {
+  .form-label {
+    @include formLabel;
+  }
+  
+  .form-input {
+    @include formInput;
+  }
+  
+  .submit-button { 
+    @include primaryButton;
+  }
+}

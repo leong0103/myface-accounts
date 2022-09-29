@@ -1,11 +1,24 @@
 using System;
 using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace MyFace.Helpers.PasswordHelper
 {
     public static class PasswordHelper
-    {
+    {   
+
+        public static (string userName, string password) GetUserDetails(string authorization)
+        {
+            string encodedData = Encoding.UTF8.GetString(Convert.FromBase64String(authorization.Substring("Base ".Length)));
+
+            string[] userNamePassword = encodedData.Split(":");
+            string userName = userNamePassword[0];
+            string password = userNamePassword[1];
+            
+            return (userName, password);
+
+        }
         public static byte[] GenerateSalt()
         {
             byte[] salt = new byte[128 / 8];
