@@ -1,4 +1,6 @@
-﻿export interface ListResponse<T> {
+﻿import { updateFor } from "typescript";
+
+export interface ListResponse<T> {
     items: T[];
     totalNumberOfItems: number;
     page: number;
@@ -50,6 +52,7 @@ export interface NewUser {
     coverImageUrl: string;
 }
 
+
 export async function fetchUsers(searchTerm: string, page: number, pageSize: number): Promise<ListResponse<User>> {
     const response = await fetch(`https://localhost:5001/users?search=${searchTerm}&page=${page}&pageSize=${pageSize}`);
     return await response.json();
@@ -60,9 +63,22 @@ export async function fetchUser(userId: string | number): Promise<User> {
     return await response.json();
 }
 
-export async function fetchPosts(page: number, pageSize: number): Promise<ListResponse<Post>> {
-    const response = await fetch(`https://localhost:5001/feed?page=${page}&pageSize=${pageSize}`);
-    return await response.json();
+export async function fetchPosts(page: number, pageSize: number, username: string, password: string): Promise<ListResponse<Post>|null> {
+    const response = await fetch(`https://localhost:5001/feed?page=${page}&pageSize=${pageSize}`,
+    {
+        headers: 
+        {
+            "authorization": `Basic ${btoa(`${username}:${password}`)}`,
+        }
+    });
+    if (response.ok)
+    {
+        return await response.json();
+    }
+    else
+    {
+        return null;
+    }
 }
 
 export async function fetchPostsForUser(page: number, pageSize: number, userId: string | number) {
